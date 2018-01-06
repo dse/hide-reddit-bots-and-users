@@ -1,0 +1,12 @@
+.comment.noncollapsed .usertext.hrbau--hidden::before {
+    margin-top: 5px;
+    content: "hidden";
+    display: block;
+    font-style: italic;
+}
+.comment.noncollapsed .usertext.hrbau--hidden .usertext-body {
+    display: none;
+}
+.comment.noncollapsed .usertext.hrbau--hidden + ul.buttons {
+    margin-top: 5px;
+}

@@ -10,5 +10,21 @@
     "permissions": [
         "activeTab",
         "storage"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "http://*.reddit.com/*",
+                "http://reddit.com/*",
+                "https://*.reddit.com/*",
+                "https://reddit.com/*"
+            ],
+            "css": [
+                "styles/hide.css"
+            ],
+            "js": [
+                "scripts/hide.js"
+            ]
+        }
     ]
 }
