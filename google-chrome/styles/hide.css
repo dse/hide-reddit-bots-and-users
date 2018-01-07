@@ -10,3 +10,9 @@
 .comment.noncollapsed .usertext.hrbau--hidden + ul.buttons {
     margin-top: 5px;
 }
+.comment.noncollapsed .usertext.hrbau--hidden + ul.buttons > li:not(.hide-show-button) {
+    display: none;
+}
+.comment.noncollapsed .usertext.hrbau--hidden + ul.buttons > li.hide-show-button {
+    padding-left: 0;
+}
