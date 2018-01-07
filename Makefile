@@ -19,18 +19,18 @@ google-chrome-resources: images/logo-19x19.png
 clean:
 	$(RM) $(LOGOS)
 
-%-32x32.png: %.svg
-	convert -geometry 32x32 $< $@.tmp.png
+%-32x32.png: %.svg Makefile
+	convert -background transparent -geometry 32x32 $< $@.tmp.png
 	mv $@.tmp.png $@
-%-48x48.png: %.svg
-	convert -geometry 48x48 $< $@.tmp.png
+%-48x48.png: %.svg Makefile
+	convert -background transparent -geometry 48x48 $< $@.tmp.png
 	mv $@.tmp.png $@
-%-128x128.png: %.svg
-	convert -geometry 128x128 $< $@.tmp.png
+%-128x128.png: %.svg Makefile
+	convert -background transparent -geometry 128x128 $< $@.tmp.png
 	mv $@.tmp.png $@
-%-16x16.png: %.svg
-	convert -geometry 16x16 $< $@.tmp.png
+%-16x16.png: %.svg Makefile
+	convert -background transparent -geometry 16x16 $< $@.tmp.png
 	mv $@.tmp.png $@
-%-19x19.png: %.svg
-	convert -geometry 19x19 $< $@.tmp.png
+%-19x19.png: %.svg Makefile
+	convert -background transparent -geometry 19x19 $< $@.tmp.png
 	mv $@.tmp.png $@
