@@ -1,6 +1,6 @@
 # Hide Reddit Bots and Users
 
-Browser extension (Chrome initially) to hide specific Reddit users and/or bots
+Browser extension (Chrome initially) to hide specific Reddit bots and/or users
 
 I developed this extension to hide comments from certain rather
 verbose bots whose long posts I didn't want to have to slog through
