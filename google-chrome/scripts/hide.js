@@ -1,3 +1,5 @@
+/* global alert, chrome */
+
 function HideList() {
     this.flags = {};
 }
