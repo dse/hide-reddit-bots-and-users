@@ -1,0 +1,43 @@
+// -*- js -*-
+{
+    // Prohibit ^, |, &, etc.
+	"bitwise": true,
+
+    // Defines modern browsers' globals.
+    "browser": true,
+
+    // Loops and conditionals require curly braces.
+    "curly": true,
+
+    // Prohibit == and !=.
+    "eqeqeq": true,
+
+    // for (key in obj) {
+    //     if (obj.hasOwnProperty(key)) {
+    //         // ...
+    //     }
+    // }
+    "forin": true,
+
+    // Warn about use of identifiers defined in future versions of
+    // JavaScript.
+    "futurehostile": true,
+
+    // Prohibit the use of variables before they are defined.
+    "latedef": true,
+
+    // Prohibit the comma operator.
+    "nocomma": true,
+
+    // Warn about U+00A0 NO-BREAK SPACE characters.
+    "nonbsp": true,
+
+    // Prohibit use of new operator without assignment.
+    "nonew": true,
+
+    // Prohibit unnecessary uses of the grouping operator.
+    "singleGroups": true,
+
+    // Prohibit the use of undeclared variables.
+    "undef": true
+}
