@@ -61,68 +61,72 @@ HideList.prototype.clearAuthorIsHiddenFlag = function (author, successCallback, 
                             });
 };
 
-var hideList = new HideList();
-
-function getAllComments() {
-    return Array.from(document.querySelectorAll(".commentarea .nestedlisting .comment"));
+function HideListExtension() {
 }
 
-function getCommentsByAuthor(author) {
-    return getAllComments().filter(function (comment) {
+HideListExtension.prototype.getAllComments = function () {
+    return Array.from(document.querySelectorAll(".commentarea .nestedlisting .comment"));
+};
+
+HideListExtension.prototype.getCommentsByAuthor = function (author) {
+    return this.getAllComments().filter(function (comment) {
         return author === comment.getAttribute("data-author");
     });
-}
+};
 
-function hideCommentsByAuthor(author) {
+HideListExtension.prototype.hideCommentsByAuthor = function (author) {
+    var that = this;
     var success = function () {
-        var comments = getCommentsByAuthor(author);
+        var comments = that.getCommentsByAuthor(author);
         comments.forEach(function (comment) {
             var text = comment.querySelector(":scope > .entry > .usertext");
             if (text) {
                 text.classList.add("hrbau--hidden");
             }
-            updateOrCreateHideShowLink(comment);
+            that.updateOrCreateHideShowLink(comment);
         });
     };
     var error = function (lastError) {
         alert(lastError.string || "unknown error sorry");
     };
-    hideList.setAuthorIsHiddenFlag(author, success, error);
-}
+    this.hideList.setAuthorIsHiddenFlag(author, success, error);
+};
 
-function showCommentsByAuthor(author) {
+HideListExtension.prototype.showCommentsByAuthor = function (author) {
+    var that = this;
     var success = function () {
-        var comments = getCommentsByAuthor(author);
+        var comments = that.getCommentsByAuthor(author);
         comments.forEach(function (comment) {
             var text = comment.querySelector(":scope > .entry > .usertext");
             if (text) {
                 text.classList.remove("hrbau--hidden");
             }
-            updateOrCreateHideShowLink(comment);
+            that.updateOrCreateHideShowLink(comment);
         });
     };
     var error = function (lastError) {
         alert(lastError.string || "unknown error sorry");
     };
-    hideList.clearAuthorIsHiddenFlag(author, success, error);
-}
+    this.hideList.clearAuthorIsHiddenFlag(author, success, error);
+};
 
-function updateHideShowLink(link) {
+HideListExtension.prototype.updateHideShowLink = function (link) {
     var author = link.getAttribute("data-author");
     while (link.hasChildNodes()) {
         link.removeChild(link.firstChild);
     }
     console.log("empty");
-    if (hideList.authorIsHidden(author)) {
+    if (this.hideList.authorIsHidden(author)) {
         console.log("add text show");
         link.appendChild(document.createTextNode("show author"));
     } else {
         console.log("add text hide");
         link.appendChild(document.createTextNode("hide author"));
     }
-}
+};
 
-function updateOrCreateHideShowLink(comment) {
+HideListExtension.prototype.updateOrCreateHideShowLink = function (comment) {
+    var that = this;
     var buttonsList = comment.querySelector(":scope > .entry > ul.buttons");
     if (!buttonsList) { return; }
     var listItem = buttonsList.querySelector(":scope > li.hide-show-button");
@@ -141,33 +145,38 @@ function updateOrCreateHideShowLink(comment) {
         /* jshint +W107 */
         link.setAttribute("data-author", author);
         link.addEventListener("click", function (event) {
-            if (hideList.authorIsHidden(author)) {
-                showCommentsByAuthor(author);
+            if (that.hideList.authorIsHidden(author)) {
+                that.showCommentsByAuthor(author);
             } else {
-                hideCommentsByAuthor(author);
+                that.hideCommentsByAuthor(author);
             }
         }, false);
         listItem.appendChild(link);
     }
-    updateHideShowLink(link);
+    this.updateHideShowLink(link);
     return link;
-}
+};
 
-function updateAllHideShowLinks() {
-    var comments = getAllComments();
+HideListExtension.prototype.updateAllHideShowLinks = function () {
+    var that = this;
+    var comments = this.getAllComments();
     comments.forEach(function (comment) {
-        updateOrCreateHideShowLink(comment);
+        that.updateOrCreateHideShowLink(comment);
     });
-}
+};
+
+var hideList = new HideList();
+var hideListExtension = new HideListExtension();
+hideListExtension.hideList = hideList;
 
 var success = function (authors) {
-    updateAllHideShowLinks();
+    hideListExtension.updateAllHideShowLinks();
     authors.forEach(function (author) {
-        hideCommentsByAuthor(author);
+        hideListExtension.hideCommentsByAuthor(author);
     });
 };
 var error = function (lastError) {
     alert(lastError.message || "unknown error sorry");
-    updateAllHideShowLinks();
+    hideListExtension.updateAllHideShowLinks();
 };
 hideList.initialize(success, error);
