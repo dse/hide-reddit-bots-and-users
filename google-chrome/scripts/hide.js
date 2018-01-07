@@ -63,6 +63,19 @@ HideList.prototype.clearAuthorIsHiddenFlag = function (author, successCallback, 
 };
 
 function HideListExtension() {
+    var that = this;
+    this.hideList = new HideList();
+    var success = function (authors) {
+        that.updateAllHideShowLinks();
+        authors.forEach(function (author) {
+            that.hideCommentsByAuthor(author);
+        });
+    };
+    var error = function (lastError) {
+        alert(lastError.message || "unknown error sorry");
+        that.updateAllHideShowLinks();
+    };
+    this.hideList.initialize(success, error);
 }
 
 HideListExtension.prototype.getAllComments = function () {
@@ -163,18 +176,4 @@ HideListExtension.prototype.updateAllHideShowLinks = function () {
     });
 };
 
-var hideList = new HideList();
 var hideListExtension = new HideListExtension();
-hideListExtension.hideList = hideList;
-
-var success = function (authors) {
-    hideListExtension.updateAllHideShowLinks();
-    authors.forEach(function (author) {
-        hideListExtension.hideCommentsByAuthor(author);
-    });
-};
-var error = function (lastError) {
-    alert(lastError.message || "unknown error sorry");
-    hideListExtension.updateAllHideShowLinks();
-};
-hideList.initialize(success, error);
