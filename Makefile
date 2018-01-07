@@ -10,6 +10,7 @@ logos: $(LOGOS)
 google-chrome-resources: images/logo-19x19.png
 	install -d google-chrome/images
 	$(INSTALL) images/logo-19x19.png google-chrome/images
+	$(INSTALL) images/logo.svg       google-chrome/images
 
 clean:
 	$(RM) $(LOGOS)
