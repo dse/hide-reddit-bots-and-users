@@ -11,7 +11,6 @@ google-chrome-resources: images/logo-19x19.png
 	install -d google-chrome/images
 	$(INSTALL) images/logo-16x16.png   google-chrome/images
 	$(INSTALL) images/logo-19x19.png   google-chrome/images
-	$(INSTALL) images/logo-32x32.png   google-chrome/images
 	$(INSTALL) images/logo-48x48.png   google-chrome/images
 	$(INSTALL) images/logo-128x128.png google-chrome/images
 	$(INSTALL) images/logo.svg         google-chrome/images
