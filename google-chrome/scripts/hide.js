@@ -1,6 +1,7 @@
 function HideList() {
     this.flags = {};
 }
+
 HideList.prototype.initialize = function (successCallback, errorCallback) {
     var that = this;
     chrome.storage.sync.get("hideList", function (items) {
@@ -23,10 +24,12 @@ HideList.prototype.initialize = function (successCallback, errorCallback) {
         }
     });
 };
+
 HideList.prototype.authorIsHidden = function (author) {
     var result = this.flags.hasOwnProperty(author) ? this.flags[author] : false;
     return result;
 };
+
 HideList.prototype.setAuthorIsHiddenFlag = function (author, successCallback, errorCallback) {
     this.flags[author] = true;
     chrome.storage.sync.set({ "hideList": Object.keys(this.flags).join(",") },
@@ -42,6 +45,7 @@ HideList.prototype.setAuthorIsHiddenFlag = function (author, successCallback, er
                                 }
                             });
 };
+
 HideList.prototype.clearAuthorIsHiddenFlag = function (author, successCallback, errorCallback) {
     delete this.flags[author];
     chrome.storage.sync.set({ "hideList": Object.keys(this.flags).join(",") },
