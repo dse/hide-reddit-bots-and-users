@@ -25,11 +25,9 @@ HideList.prototype.initialize = function (successCallback, errorCallback) {
 };
 HideList.prototype.authorIsHidden = function (author) {
     var result = this.flags.hasOwnProperty(author) ? this.flags[author] : false;
-    console.log("authorIsHidden", author, "=>", result);
     return result;
 };
 HideList.prototype.setAuthorIsHiddenFlag = function (author, successCallback, errorCallback) {
-    console.log("setAuthorIsHiddenFlag", author);
     this.flags[author] = true;
     chrome.storage.sync.set({ "hideList": Object.keys(this.flags).join(",") },
                             function () {
@@ -45,7 +43,6 @@ HideList.prototype.setAuthorIsHiddenFlag = function (author, successCallback, er
                             });
 };
 HideList.prototype.clearAuthorIsHiddenFlag = function (author, successCallback, errorCallback) {
-    console.log("clearAuthorIsHiddenFlag", author);
     delete this.flags[author];
     chrome.storage.sync.set({ "hideList": Object.keys(this.flags).join(",") },
                             function () {
@@ -115,12 +112,9 @@ HideListExtension.prototype.updateHideShowLink = function (link) {
     while (link.hasChildNodes()) {
         link.removeChild(link.firstChild);
     }
-    console.log("empty");
     if (this.hideList.authorIsHidden(author)) {
-        console.log("add text show");
         link.appendChild(document.createTextNode("show author"));
     } else {
-        console.log("add text hide");
         link.appendChild(document.createTextNode("hide author"));
     }
 };
