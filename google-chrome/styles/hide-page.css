@@ -1,0 +1,23 @@
+html {
+    width: 20em;
+}
+h1.title {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+h1.title > .logo {
+    flex-grow: 0;
+}
+h1.title > .text {
+    flex-grow: 1;
+    margin-left: 0.5em;
+}
+body > *:first-child,
+body > *:first-child > *:first-child {
+    margin-top: 0;
+}
+body > *:last-child,
+body > *:last-child > *:last-child {
+    margin-bottom: 0;
+}
