@@ -2,10 +2,30 @@
 <html>
 	<head>
 		<title>Hide Reddit Bots and Users</title>
+		<link rel="stylesheet" href="../styles/hide-page.css">
 	</head>
 	<body>
 
-		<h1>Hide Reddit Bots and Users</h1>
+		<h1 class="title">
+			<span class="logo"><img src="../images/logo.svg" width="64"></span>
+			<span class="text">Hide Reddit Bots and Users</span>
+		</h1>
+
+		<div class="you-have-no-users">
+			<p>You have no users in your hide list.</p>
+		</div>
+
+		<div class="you-have-users">
+			<h2>Hide List</h2>
+
+			<ul class="hide-list">
+				<!-- populated dynamically -->
+			</ul>
+
+			<form>
+				<button class="clear-hide-list">Clear</button>
+			</form>
+		</div>
 
 	</body>
 </html>
