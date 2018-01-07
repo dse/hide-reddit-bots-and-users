@@ -1,19 +1,67 @@
-var flags = {};
-function authorIsHidden(author) {
-    var result = flags.hasOwnProperty(author) ? flags[author] : false;
+function HideList() {
+    this.flags = {};
+}
+HideList.prototype.initialize = function (successCallback, errorCallback) {
+    var that = this;
+    chrome.storage.sync.get("hideList", function (items) {
+        if (chrome.runtime.lastError) {
+            if (errorCallback) {
+                errorCallback(chrome.runtime.lastError);
+            }
+        } else {
+            var hideList = items.hideList;
+            var authors = hideList ? hideList.split(",") : [];
+            authors = authors.filter(function (author) {
+                return author !== "";
+            });
+            authors.forEach(function (author) {
+                that.flags[author] = true;
+            });
+            if (successCallback) {
+                successCallback(authors);
+            }
+        }
+    });
+};
+HideList.prototype.authorIsHidden = function (author) {
+    var result = this.flags.hasOwnProperty(author) ? this.flags[author] : false;
     console.log("authorIsHidden", author, "=>", result);
     return result;
-}
-
-function setAuthorIsHiddenFlag(author) {
+};
+HideList.prototype.setAuthorIsHiddenFlag = function (author, successCallback, errorCallback) {
     console.log("setAuthorIsHiddenFlag", author);
-    flags[author] = true;
-}
-
-function clearAuthorIsHiddenFlag(author) {
+    this.flags[author] = true;
+    chrome.storage.sync.set({ "hideList": Object.keys(this.flags).join(",") },
+                            function () {
+                                if (chrome.runtime.lastError) {
+                                    if (errorCallback) {
+                                        errorCallback(chrome.runtime.lastError);
+                                    }
+                                } else {
+                                    if (successCallback) {
+                                        successCallback();
+                                    }
+                                }
+                            });
+};
+HideList.prototype.clearAuthorIsHiddenFlag = function (author, successCallback, errorCallback) {
     console.log("clearAuthorIsHiddenFlag", author);
-    delete flags[author];
-}
+    delete this.flags[author];
+    chrome.storage.sync.set({ "hideList": Object.keys(this.flags).join(",") },
+                            function () {
+                                if (chrome.runtime.lastError) {
+                                    if (errorCallback) {
+                                        errorCallback(chrome.runtime.lastError);
+                                    }
+                                } else {
+                                    if (successCallback) {
+                                        successCallback();
+                                    }
+                                }
+                            });
+};
+
+var hideList = new HideList();
 
 function getAllComments() {
     return Array.from(document.querySelectorAll(".commentarea .nestedlisting .comment"));
@@ -26,27 +74,37 @@ function getCommentsByAuthor(author) {
 }
 
 function hideCommentsByAuthor(author) {
-    setAuthorIsHiddenFlag(author);
-    var comments = getCommentsByAuthor(author);
-    comments.forEach(function (comment) {
-        var text = comment.querySelector(":scope > .entry > .usertext");
-        if (text) {
-            text.classList.add("hrbau--hidden");
-        }
-        updateOrCreateHideShowLink(comment);
-    });
+    var success = function () {
+        var comments = getCommentsByAuthor(author);
+        comments.forEach(function (comment) {
+            var text = comment.querySelector(":scope > .entry > .usertext");
+            if (text) {
+                text.classList.add("hrbau--hidden");
+            }
+            updateOrCreateHideShowLink(comment);
+        });
+    };
+    var error = function (lastError) {
+        alert(lastError.string || "unknown error sorry");
+    };
+    hideList.setAuthorIsHiddenFlag(author, success, error);
 }
 
 function showCommentsByAuthor(author) {
-    clearAuthorIsHiddenFlag(author);
-    var comments = getCommentsByAuthor(author);
-    comments.forEach(function (comment) {
-        var text = comment.querySelector(":scope > .entry > .usertext");
-        if (text) {
-            text.classList.remove("hrbau--hidden");
-        }
-        updateOrCreateHideShowLink(comment);
-    });
+    var success = function () {
+        var comments = getCommentsByAuthor(author);
+        comments.forEach(function (comment) {
+            var text = comment.querySelector(":scope > .entry > .usertext");
+            if (text) {
+                text.classList.remove("hrbau--hidden");
+            }
+            updateOrCreateHideShowLink(comment);
+        });
+    };
+    var error = function (lastError) {
+        alert(lastError.string || "unknown error sorry");
+    };
+    hideList.clearAuthorIsHiddenFlag(author, success, error);
 }
 
 function updateHideShowLink(link) {
@@ -55,7 +113,7 @@ function updateHideShowLink(link) {
         link.removeChild(link.firstChild);
     }
     console.log("empty");
-    if (authorIsHidden(author)) {
+    if (hideList.authorIsHidden(author)) {
         console.log("add text show");
         link.appendChild(document.createTextNode("show author"));
     } else {
@@ -83,7 +141,7 @@ function updateOrCreateHideShowLink(comment) {
         /* jshint +W107 */
         link.setAttribute("data-author", author);
         link.addEventListener("click", function (event) {
-            if (authorIsHidden(author)) {
+            if (hideList.authorIsHidden(author)) {
                 showCommentsByAuthor(author);
             } else {
                 hideCommentsByAuthor(author);
@@ -102,4 +160,14 @@ function updateAllHideShowLinks() {
     });
 }
 
-updateAllHideShowLinks();
+var success = function (authors) {
+    updateAllHideShowLinks();
+    authors.forEach(function (author) {
+        hideCommentsByAuthor(author);
+    });
+};
+var error = function (lastError) {
+    alert(lastError.message || "unknown error sorry");
+    updateAllHideShowLinks();
+};
+hideList.initialize(success, error);
