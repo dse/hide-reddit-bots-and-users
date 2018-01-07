@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Hide Reddit Bots and Users",
-    "description": "Extension to hide specific Reddit users and/or bots",
+    "description": "Extension to hide specific Reddit bots and/or users",
     "version": "0.0",
     "browser_action": {
         "default_icon": "images/logo-19x19.png",
