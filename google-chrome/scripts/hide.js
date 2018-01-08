@@ -36,22 +36,22 @@ RedditPageHideListExtension.prototype.getCommentsByAuthor = function (author) {
 };
 
 RedditPageHideListExtension.prototype.hideCommentsByAuthor = function (author) {
-    var that = this;
-    var success = function () {
-        var comments = that.getCommentsByAuthor(author);
-        comments.forEach(function (comment) {
-            var text = comment.querySelector(":scope > .entry > .usertext");
-            if (text) {
-                text.classList.add("hrbau--hidden");
-            }
-            that.updateOrCreateHideShowLink(comment);
-        });
-    };
-    var error = function (lastError) {
-        alert(lastError.string || "unknown error sorry");
-    };
     this.isUpdatingDocument += 1;
     try {
+        var that = this;
+        var success = function () {
+            var comments = that.getCommentsByAuthor(author);
+            comments.forEach(function (comment) {
+                var text = comment.querySelector(":scope > .entry > .usertext");
+                if (text) {
+                    text.classList.add("hrbau--hidden");
+                }
+                that.updateOrCreateHideShowLink(comment);
+            });
+        };
+        var error = function (lastError) {
+            alert(lastError.string || "unknown error sorry");
+        };
         this.hideList.setAuthorIsHiddenFlag(author, success, error);
     } finally {
         this.isUpdatingDocument -= 1;
@@ -59,22 +59,22 @@ RedditPageHideListExtension.prototype.hideCommentsByAuthor = function (author) {
 };
 
 RedditPageHideListExtension.prototype.showCommentsByAuthor = function (author) {
-    var that = this;
-    var success = function () {
-        var comments = that.getCommentsByAuthor(author);
-        comments.forEach(function (comment) {
-            var text = comment.querySelector(":scope > .entry > .usertext");
-            if (text) {
-                text.classList.remove("hrbau--hidden");
-            }
-            that.updateOrCreateHideShowLink(comment);
-        });
-    };
-    var error = function (lastError) {
-        alert(lastError.string || "unknown error sorry");
-    };
     this.isUpdatingDocument += 1;
     try {
+        var that = this;
+        var success = function () {
+            var comments = that.getCommentsByAuthor(author);
+            comments.forEach(function (comment) {
+                var text = comment.querySelector(":scope > .entry > .usertext");
+                if (text) {
+                    text.classList.remove("hrbau--hidden");
+                }
+                that.updateOrCreateHideShowLink(comment);
+            });
+        };
+        var error = function (lastError) {
+            alert(lastError.string || "unknown error sorry");
+        };
         this.hideList.clearAuthorIsHiddenFlag(author, success, error);
     } finally {
         this.isUpdatingDocument -= 1;
@@ -136,10 +136,10 @@ RedditPageHideListExtension.prototype.updateOrCreateHideShowLink = function (com
 };
 
 RedditPageHideListExtension.prototype.updateAllHideShowLinks = function () {
-    var that = this;
-    var comments = this.getAllComments();
     this.isUpdatingDocument += 1;
     try {
+        var that = this;
+        var comments = this.getAllComments();
         comments.forEach(function (comment) {
             that.updateOrCreateHideShowLink(comment);
         });
