@@ -28,6 +28,7 @@
                 "styles/hide.css"
             ],
             "js": [
+                "scripts/HideList.js",
                 "scripts/hide.js"
             ]
         }
