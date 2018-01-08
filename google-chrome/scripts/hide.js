@@ -65,7 +65,7 @@ HideList.prototype.clearAuthorIsHiddenFlag = function (author, successCallback, 
                             });
 };
 
-function HideListExtension() {
+function RedditPageHideListExtension() {
     var that = this;
     this.hideList = new HideList();
     var success = function (authors) {
@@ -83,17 +83,17 @@ function HideListExtension() {
     this.setupStorageListener();
 }
 
-HideListExtension.prototype.getAllComments = function () {
+RedditPageHideListExtension.prototype.getAllComments = function () {
     return Array.from(document.querySelectorAll(".commentarea .nestedlisting .comment"));
 };
 
-HideListExtension.prototype.getCommentsByAuthor = function (author) {
+RedditPageHideListExtension.prototype.getCommentsByAuthor = function (author) {
     return this.getAllComments().filter(function (comment) {
         return author === comment.getAttribute("data-author");
     });
 };
 
-HideListExtension.prototype.hideCommentsByAuthor = function (author) {
+RedditPageHideListExtension.prototype.hideCommentsByAuthor = function (author) {
     var that = this;
     var success = function () {
         var comments = that.getCommentsByAuthor(author);
@@ -111,7 +111,7 @@ HideListExtension.prototype.hideCommentsByAuthor = function (author) {
     this.hideList.setAuthorIsHiddenFlag(author, success, error);
 };
 
-HideListExtension.prototype.showCommentsByAuthor = function (author) {
+RedditPageHideListExtension.prototype.showCommentsByAuthor = function (author) {
     var that = this;
     var success = function () {
         var comments = that.getCommentsByAuthor(author);
@@ -129,7 +129,7 @@ HideListExtension.prototype.showCommentsByAuthor = function (author) {
     this.hideList.clearAuthorIsHiddenFlag(author, success, error);
 };
 
-HideListExtension.prototype.updateHideShowLink = function (link) {
+RedditPageHideListExtension.prototype.updateHideShowLink = function (link) {
     var author = link.getAttribute("data-author");
     while (link.hasChildNodes()) {
         link.removeChild(link.firstChild);
@@ -141,7 +141,7 @@ HideListExtension.prototype.updateHideShowLink = function (link) {
     }
 };
 
-HideListExtension.prototype.updateOrCreateHideShowLink = function (comment) {
+RedditPageHideListExtension.prototype.updateOrCreateHideShowLink = function (comment) {
     var that = this;
     var buttonsList = comment.querySelector(":scope > .entry > ul.buttons");
     if (!buttonsList) { return; }
@@ -173,7 +173,7 @@ HideListExtension.prototype.updateOrCreateHideShowLink = function (comment) {
     return link;
 };
 
-HideListExtension.prototype.updateAllHideShowLinks = function () {
+RedditPageHideListExtension.prototype.updateAllHideShowLinks = function () {
     var that = this;
     var comments = this.getAllComments();
     comments.forEach(function (comment) {
@@ -181,7 +181,7 @@ HideListExtension.prototype.updateAllHideShowLinks = function () {
     });
 };
 
-HideListExtension.prototype.setupMutationObserver = function () {
+RedditPageHideListExtension.prototype.setupMutationObserver = function () {
     var commentArea = document.querySelector(".commentarea");
     var observer;
     var config;
@@ -197,10 +197,10 @@ HideListExtension.prototype.setupMutationObserver = function () {
     }
 };
 
-HideListExtension.prototype.setupStorageListener = function () {
+RedditPageHideListExtension.prototype.setupStorageListener = function () {
     chrome.storage.onChanged.addListener(function (changes, areaName) {
         console.log("chrome.storage.onChanged event", changes, areaName);
     });
 };
 
-var hideListExtension = new HideListExtension();
+var extension = new RedditPageHideListExtension();
