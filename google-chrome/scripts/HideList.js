@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 /*global chrome */
 
 function HideList() {
@@ -6,8 +7,7 @@ function HideList() {
 }
 
 HideList.prototype.initialize = function (successCallback, errorCallback) {
-    var that = this;
-    chrome.storage.sync.get("hideList", function (items) {
+    chrome.storage.sync.get("hideList", (items) => {
         if (chrome.runtime.lastError) {
             if (errorCallback) {
                 errorCallback(chrome.runtime.lastError);
@@ -15,11 +15,11 @@ HideList.prototype.initialize = function (successCallback, errorCallback) {
         } else {
             var hideList = items.hideList;
             var authors = hideList ? hideList.split(",") : [];
-            authors = authors.filter(function (author) {
+            authors = authors.filter((author) => {
                 return author !== "";
             });
-            authors.forEach(function (author) {
-                that.flags[author] = true;
+            authors.forEach((author) => {
+                this.flags[author] = true;
             });
             if (successCallback) {
                 successCallback(authors);
@@ -34,12 +34,11 @@ HideList.prototype.authorIsHidden = function (author) {
 };
 
 HideList.prototype.setAuthorIsHiddenFlag = function (author, successCallback, errorCallback) {
-    var that = this;
     this.flags[author] = true;
     this.isUpdatingStorage += 1;
     chrome.storage.sync.set(
         { "hideList": Object.keys(this.flags).join(",") },
-        function () {
+        () => {
             try {
                 if (chrome.runtime.lastError) {
                     if (errorCallback) {
@@ -51,19 +50,18 @@ HideList.prototype.setAuthorIsHiddenFlag = function (author, successCallback, er
                     }
                 }
             } finally {
-                that.isUpdatingStorage -= 1;
+                this.isUpdatingStorage -= 1;
             }
         }
     );
 };
 
 HideList.prototype.clearAuthorIsHiddenFlag = function (author, successCallback, errorCallback) {
-    var that = this;
     delete this.flags[author];
     this.isUpdatingStorage += 1;
     chrome.storage.sync.set(
         { "hideList": Object.keys(this.flags).join(",") },
-        function () {
+        () => {
             try {
                 if (chrome.runtime.lastError) {
                     if (errorCallback) {
@@ -75,7 +73,7 @@ HideList.prototype.clearAuthorIsHiddenFlag = function (author, successCallback, 
                     }
                 }
             } finally {
-                that.isUpdatingStorage -= 1;
+                this.isUpdatingStorage -= 1;
             }
         }
     );
