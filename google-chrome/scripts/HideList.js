@@ -34,18 +34,20 @@ HideList.prototype.authorIsHidden = function (author) {
 
 HideList.prototype.setAuthorIsHiddenFlag = function (author, successCallback, errorCallback) {
     this.flags[author] = true;
-    chrome.storage.sync.set({ "hideList": Object.keys(this.flags).join(",") },
-                            function () {
-                                if (chrome.runtime.lastError) {
-                                    if (errorCallback) {
-                                        errorCallback(chrome.runtime.lastError);
-                                    }
-                                } else {
-                                    if (successCallback) {
-                                        successCallback();
-                                    }
-                                }
-                            });
+    chrome.storage.sync.set(
+        { "hideList": Object.keys(this.flags).join(",") },
+        function () {
+            if (chrome.runtime.lastError) {
+                if (errorCallback) {
+                    errorCallback(chrome.runtime.lastError);
+                }
+            } else {
+                if (successCallback) {
+                    successCallback();
+                }
+            }
+        }
+    );
 };
 
 HideList.prototype.clearAuthorIsHiddenFlag = function (author, successCallback, errorCallback) {
