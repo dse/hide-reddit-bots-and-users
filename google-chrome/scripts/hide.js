@@ -3,17 +3,24 @@
 
 function RedditPageHideListExtension() {
     var that = this;
-    this.hideList = new HideList();
     this.isUpdatingDocument = 0;
+
+    /*
+     * Initially we don't want beginUpdatingDocument and
+     * endUpdatingDocument to start mutationObservers just yet.
+     */
+    this.allowMutationObserver = false;
+
+    this.hideList = new HideList();
     var success = function (authors) {
-        that.isUpdatingDocument += 1;
+        that.beginUpdatingDocument();
         try {
             that.updateAllHideShowLinks();
             authors.forEach(function (author) {
                 that.hideCommentsByAuthor(author);
             });
         } finally {
-            that.isUpdatingDocument -= 1;
+            that.endUpdatingDocument();
         }
     };
     var error = function (lastError) {
@@ -21,9 +28,27 @@ function RedditPageHideListExtension() {
         that.updateAllHideShowLinks();
     };
     this.hideList.initialize(success, error);
-    this.setupMutationObserver();
+
+    this.allowMutationObserver = true;
+    this.startMutationObserver();
     this.setupStorageListener();
 }
+
+RedditPageHideListExtension.prototype.beginUpdatingDocument = function () {
+    this.isUpdatingDocument += 1;
+    if (this.isUpdatingDocument >= 1) {
+        this.stopMutationObserver();
+    }
+};
+
+RedditPageHideListExtension.prototype.endUpdatingDocument = function () {
+    if (this.isUpdatingDocument >= 1) {
+        this.isUpdatingDocument -= 1;
+    }
+    if (this.isUpdatingDocument < 1) {
+        this.startMutationObserver();
+    }
+};
 
 RedditPageHideListExtension.prototype.getAllComments = function () {
     return Array.from(document.querySelectorAll(".commentarea .nestedlisting .comment"));
@@ -36,7 +61,7 @@ RedditPageHideListExtension.prototype.getCommentsByAuthor = function (author) {
 };
 
 RedditPageHideListExtension.prototype.hideCommentsByAuthor = function (author) {
-    this.isUpdatingDocument += 1;
+    this.beginUpdatingDocument();
     try {
         var that = this;
         var success = function () {
@@ -54,12 +79,12 @@ RedditPageHideListExtension.prototype.hideCommentsByAuthor = function (author) {
         };
         this.hideList.setAuthorIsHiddenFlag(author, success, error);
     } finally {
-        this.isUpdatingDocument -= 1;
+        this.endUpdatingDocument();
     }
 };
 
 RedditPageHideListExtension.prototype.showCommentsByAuthor = function (author) {
-    this.isUpdatingDocument += 1;
+    this.beginUpdatingDocument();
     try {
         var that = this;
         var success = function () {
@@ -77,12 +102,12 @@ RedditPageHideListExtension.prototype.showCommentsByAuthor = function (author) {
         };
         this.hideList.clearAuthorIsHiddenFlag(author, success, error);
     } finally {
-        this.isUpdatingDocument -= 1;
+        this.endUpdatingDocument();
     }
 };
 
 RedditPageHideListExtension.prototype.updateHideShowLink = function (link) {
-    this.isUpdatingDocument += 1;
+    this.beginUpdatingDocument();
     try {
         var author = link.getAttribute("data-author");
         while (link.hasChildNodes()) {
@@ -94,12 +119,12 @@ RedditPageHideListExtension.prototype.updateHideShowLink = function (link) {
             link.appendChild(document.createTextNode("hide author"));
         }
     } finally {
-        this.isUpdatingDocument -= 1;
+        this.endUpdatingDocument();
     }
 };
 
 RedditPageHideListExtension.prototype.updateOrCreateHideShowLink = function (comment) {
-    this.isUpdatingDocument += 1;
+    this.beginUpdatingDocument();
     try {
         var that = this;
         var buttonsList = comment.querySelector(":scope > .entry > ul.buttons");
@@ -131,12 +156,12 @@ RedditPageHideListExtension.prototype.updateOrCreateHideShowLink = function (com
         this.updateHideShowLink(link);
         return link;
     } finally {
-        this.isUpdatingDocument -= 1;
+        this.endUpdatingDocument();
     }
 };
 
 RedditPageHideListExtension.prototype.updateAllHideShowLinks = function () {
-    this.isUpdatingDocument += 1;
+    this.beginUpdatingDocument();
     try {
         var that = this;
         var comments = this.getAllComments();
@@ -144,26 +169,39 @@ RedditPageHideListExtension.prototype.updateAllHideShowLinks = function () {
             that.updateOrCreateHideShowLink(comment);
         });
     } finally {
-        this.isUpdatingDocument -= 1;
+        this.endUpdatingDocument();
     }
 };
 
-RedditPageHideListExtension.prototype.setupMutationObserver = function () {
+RedditPageHideListExtension.prototype.startMutationObserver = function () {
     var that = this;
     var commentArea = document.querySelector(".commentarea");
-    var observer;
     var config;
-    if (commentArea) {
-        observer = new MutationObserver(function (mutationRecords, observer) {
-            if (!that.isUpdatingDocument) {
-                console.log("MutationObserver event", mutationRecords, observer);
+    if (this.allowMutationObserver) {
+        if (commentArea) {
+            if (!this.mutationObserver) {
+                this.mutationObserver = new MutationObserver(function (mutationRecords, observer) {
+                    console.log(that.isUpdatingDocument);
+                    if (!that.isUpdatingDocument) {
+                        console.log("MutationObserver event", mutationRecords, observer);
+                    }
+                });
+                config = {
+                    childList: true,
+                    subtree: true
+                };
+                this.mutationObserver.observe(commentArea, config);
             }
-        });
-        config = {
-            childList: true,
-            subtree: true
-        };
-        observer.observe(commentArea, config);
+        }
+    } else {
+        this.stopMutationObserver();
+    }
+};
+
+RedditPageHideListExtension.prototype.stopMutationObserver = function () {
+    if (this.mutationObserver) {
+        this.mutationObserver.disconnect();
+        delete this.mutationObserver;
     }
 };
 
