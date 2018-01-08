@@ -2,6 +2,7 @@
 
 function HideList() {
     this.flags = {};
+    this.isUpdatingStorage = 0;
 }
 
 HideList.prototype.initialize = function (successCallback, errorCallback) {
@@ -33,36 +34,48 @@ HideList.prototype.authorIsHidden = function (author) {
 };
 
 HideList.prototype.setAuthorIsHiddenFlag = function (author, successCallback, errorCallback) {
+    var that = this;
     this.flags[author] = true;
+    this.isUpdatingStorage += 1;
     chrome.storage.sync.set(
         { "hideList": Object.keys(this.flags).join(",") },
         function () {
-            if (chrome.runtime.lastError) {
-                if (errorCallback) {
-                    errorCallback(chrome.runtime.lastError);
+            try {
+                if (chrome.runtime.lastError) {
+                    if (errorCallback) {
+                        errorCallback(chrome.runtime.lastError);
+                    }
+                } else {
+                    if (successCallback) {
+                        successCallback();
+                    }
                 }
-            } else {
-                if (successCallback) {
-                    successCallback();
-                }
+            } finally {
+                that.isUpdatingStorage -= 1;
             }
         }
     );
 };
 
 HideList.prototype.clearAuthorIsHiddenFlag = function (author, successCallback, errorCallback) {
+    var that = this;
     delete this.flags[author];
+    this.isUpdatingStorage += 1;
     chrome.storage.sync.set(
         { "hideList": Object.keys(this.flags).join(",") },
         function () {
-            if (chrome.runtime.lastError) {
-                if (errorCallback) {
-                    errorCallback(chrome.runtime.lastError);
+            try {
+                if (chrome.runtime.lastError) {
+                    if (errorCallback) {
+                        errorCallback(chrome.runtime.lastError);
+                    }
+                } else {
+                    if (successCallback) {
+                        successCallback();
+                    }
                 }
-            } else {
-                if (successCallback) {
-                    successCallback();
-                }
+            } finally {
+                that.isUpdatingStorage -= 1;
             }
         }
     );
