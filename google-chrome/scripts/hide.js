@@ -1,3 +1,4 @@
+/* jshint devel: true */
 /* global alert, chrome */
 
 function HideList() {
@@ -78,6 +79,8 @@ function HideListExtension() {
         that.updateAllHideShowLinks();
     };
     this.hideList.initialize(success, error);
+    this.setupMutationObserver();
+    this.setupStorageListener();
 }
 
 HideListExtension.prototype.getAllComments = function () {
@@ -175,6 +178,28 @@ HideListExtension.prototype.updateAllHideShowLinks = function () {
     var comments = this.getAllComments();
     comments.forEach(function (comment) {
         that.updateOrCreateHideShowLink(comment);
+    });
+};
+
+HideListExtension.prototype.setupMutationObserver = function () {
+    var commentArea = document.querySelector(".commentarea");
+    var observer;
+    var config;
+    if (commentArea) {
+        observer = new MutationObserver(function (mutationRecords, observer) {
+            console.log("MutationObserver event", mutationRecords, observer);
+        });
+        config = {
+            childList: true,
+            subtree: true
+        };
+        observer.observe(commentArea, config);
+    }
+};
+
+HideListExtension.prototype.setupStorageListener = function () {
+    chrome.storage.onChanged.addListener(function (changes, areaName) {
+        console.log("chrome.storage.onChanged event", changes, areaName);
     });
 };
 
