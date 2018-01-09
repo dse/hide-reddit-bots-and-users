@@ -71,6 +71,22 @@ RedditPageHideListExtension.prototype.getCommentsByAuthor = function (author) {
     });
 };
 
+RedditPageHideListExtension.prototype.showHideComment = function (comment) {
+    var author = comment.getAttribute("data-author");
+    var text = comment.querySelector(":scope > .entry > .usertext");
+    if (this.hideList.authorIsHidden(author)) {
+        text.classList.add("hrbau--hidden");
+    } else {
+        text.classList.remove("hrbau--hidden");
+    }
+};
+
+RedditPageHideListExtension.prototype.showHideAllComments = function () {
+    this.getAllComments().forEach((comment) => {
+        this.showHideComment(comment);
+    });
+};
+
 RedditPageHideListExtension.prototype.hideCommentsByAuthor = function (author) {
     this.beginUpdatingDocument();
     try {
@@ -182,9 +198,9 @@ RedditPageHideListExtension.prototype.updateAllHideShowLinks = function () {
 
 RedditPageHideListExtension.prototype.onMutation = function (mutationRecords, observer) {
     var commentIDs = this.getAllCommentIDs().join(",");
-    this.updateAllHideShowLinks();
     if (!this.cachedCommentIDs || this.commentIDs !== this.cachedCommentIDs) {
         this.updateAllHideShowLinks();
+        this.showHideAllComments();
     }
     this.cachedCommentIDs = commentIDs;
 };
@@ -221,8 +237,16 @@ RedditPageHideListExtension.prototype.stopMutationObserver = function () {
 
 RedditPageHideListExtension.prototype.setupStorageListener = function () {
     chrome.storage.onChanged.addListener((changes, areaName) => {
+        var newValue;
         if (!this.hideList.isUpdatingStorage) {
-            console.log("chrome.storage.onChanged event", changes, areaName);
+            console.log(changes);
+            if ("hideList" in changes) {
+                newValue = changes.hideList.newValue;
+                console.log(newValue);
+                this.hideList.updateFromStorageValue(newValue);
+                this.updateAllHideShowLinks();
+                this.showHideAllComments();
+            }
         }
     });
 };

@@ -14,18 +14,47 @@ HideList.prototype.initialize = function (successCallback, errorCallback) {
             }
         } else {
             var hideList = items.hideList;
-            var authors = hideList ? hideList.split(",") : [];
-            authors = authors.filter((author) => {
-                return author !== "";
-            });
-            authors.forEach((author) => {
-                this.flags[author] = true;
-            });
+            var authors = this.updateFromStorageValue(hideList);
             if (successCallback) {
                 successCallback(authors);
             }
         }
     });
+};
+
+HideList.prototype.updateFromStorageValue = function (value) {
+    var authors = (value !== null &&
+                   value !== undefined &&
+                   value !== "") ? value.split(",") : [];
+    authors = authors.filter((author) => {
+        return author !== "";
+    });
+    this.flags = {};
+    authors.forEach((author) => {
+        this.flags[author] = true;
+    });
+    return authors;
+};
+
+HideList.prototype.getMembers = function () {
+    var result = Object.keys(this.flags);
+    var sortOptions = {
+        "sensitivity": "base",
+        "numeric": true
+    };
+
+    // schwartzian transform
+    result = result.map((member) => {
+        return [member, member.toLowerCase()];
+    });
+    result.sort((a, b) => {
+        return a[1].localeCompare(b[1], sortOptions);
+    });
+    result = result.map((member) => {
+        return member[0];
+    });
+
+    return result;
 };
 
 HideList.prototype.authorIsHidden = function (author) {
