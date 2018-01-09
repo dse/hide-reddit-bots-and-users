@@ -26,3 +26,6 @@ syncing disabled, it uses local storage because in that situation,
 
 - Popup: allow the user to remove an individual bot or user from the
   list.
+
+- Popup: find a way to confirm() before clearing out the hide list.
+  `confirm()` causes the popup to close prematurely.
