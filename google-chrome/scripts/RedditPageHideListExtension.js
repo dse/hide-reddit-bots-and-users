@@ -15,7 +15,6 @@ function RedditPageHideListExtension() {
         this.allowMutationObserver = true;
         this.startMutationObserver();
         this.setupStorageListener();
-        console.log(this.hideList.getMembers());
     };
     var success = (authors) => {
         this.beginUpdatingDocument();
@@ -239,10 +238,8 @@ RedditPageHideListExtension.prototype.setupStorageListener = function () {
     chrome.storage.onChanged.addListener((changes, areaName) => {
         var newValue;
         if (!this.hideList.isUpdatingStorage) {
-            console.log(changes);
             if ("hideList" in changes) {
                 newValue = changes.hideList.newValue;
-                console.log(newValue);
                 this.hideList.updateFromStorageValue(newValue);
                 this.updateAllHideShowLinks();
                 this.showHideAllComments();

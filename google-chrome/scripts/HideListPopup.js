@@ -5,7 +5,6 @@ function HideListPopup() {
     this.hideList = new HideList();
     var complete = () => {
         this.updateList();
-        console.log(this.hideList.getMembers());
     };
     var success = (authors) => {
         document.addEventListener("click", (event) => {
@@ -27,7 +26,6 @@ HideListPopup.prototype.updateList = function () {
     if (!ul) {
         return;
     }
-    console.log("ul");
     while (ul.hasChildNodes()) {
         ul.removeChild(ul.firstChild);
     }
@@ -41,7 +39,6 @@ HideListPopup.prototype.updateList = function () {
         });
         members.forEach((member) => {
             var li = document.createElement("li");
-            console.log(member, li);
             li.appendChild(document.createTextNode(member));
             ul.appendChild(li);
         });
