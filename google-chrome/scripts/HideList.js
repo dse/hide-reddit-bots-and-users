@@ -78,3 +78,26 @@ HideList.prototype.clearAuthorIsHiddenFlag = function (author, successCallback, 
         }
     );
 };
+
+HideList.prototype.clearAll = function (successCallback, errorCallback) {
+    this.flags = {};
+    this.isUpdatingStorage += 1;
+    chrome.storage.sync.set(
+        { "hideList": "" },
+        () => {
+            try {
+                if (chrome.runtime.lastError) {
+                    if (errorCallback) {
+                        errorCallback(chrome.runtime.lastError);
+                    }
+                } else {
+                    if (successCallback) {
+                        successCallback();
+                    }
+                }
+            } finally {
+                this.isUpdatingStorage -= 1;
+            }
+        }
+    );
+};
