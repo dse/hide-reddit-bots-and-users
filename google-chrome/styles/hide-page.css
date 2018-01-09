@@ -21,3 +21,9 @@ body > *:last-child,
 body > *:last-child > *:last-child {
     margin-bottom: 0;
 }
+.you-have-no-users {
+    display: none;              /* initial state */
+}
+.you-have-users {
+    display: none;              /* initial state */
+}
