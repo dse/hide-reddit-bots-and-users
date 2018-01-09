@@ -29,7 +29,7 @@
             ],
             "js": [
                 "scripts/HideList.js",
-                "scripts/hide.js"
+                "scripts/RedditPageHideListExtension.js"
             ]
         }
     ]
