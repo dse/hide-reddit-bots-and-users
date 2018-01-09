@@ -53,6 +53,14 @@ RedditPageHideListExtension.prototype.getAllComments = function () {
     return Array.from(document.querySelectorAll(".commentarea .nestedlisting .comment"));
 };
 
+RedditPageHideListExtension.prototype.getAllCommentIDs = function () {
+    return this.getAllComments().map((comment) => {
+        return comment.getAttribute("data-fullname");
+    }).filter((fullname) => {
+        return fullname !== null && fullname !== undefined && fullname !== "";
+    });
+};
+
 RedditPageHideListExtension.prototype.getCommentsByAuthor = function (author) {
     return this.getAllComments().filter((comment) => {
         return author === comment.getAttribute("data-author");
@@ -168,6 +176,16 @@ RedditPageHideListExtension.prototype.updateAllHideShowLinks = function () {
     }
 };
 
+RedditPageHideListExtension.prototype.onMutation = function (mutationRecords, observer) {
+    var commentIDs = this.getAllCommentIDs().join(",");
+    this.updateAllHideShowLinks();
+    if (!this.cachedCommentIDs || this.commentIDs !== this.cachedCommentIDs) {
+        console.log(commentIDs);
+        this.updateAllHideShowLinks();
+    }
+    this.cachedCommentIDs = commentIDs;
+};
+
 RedditPageHideListExtension.prototype.startMutationObserver = function () {
     var commentArea = document.querySelector(".commentarea");
     var config;
@@ -177,7 +195,7 @@ RedditPageHideListExtension.prototype.startMutationObserver = function () {
                 this.mutationObserver = new MutationObserver((mutationRecords, observer) => {
                     console.log(this.isUpdatingDocument);
                     if (!this.isUpdatingDocument) {
-                        console.log("MutationObserver event", mutationRecords, observer);
+                        this.onMutation(mutationRecords, observer);
                     }
                 });
                 config = {
