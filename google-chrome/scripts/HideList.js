@@ -33,8 +33,7 @@ HideList.prototype.authorIsHidden = function (author) {
     return result;
 };
 
-HideList.prototype.setAuthorIsHiddenFlag = function (author, successCallback, errorCallback) {
-    this.flags[author] = true;
+HideList.prototype.updateStorage = function (successCallback, errorCallback) {
     this.isUpdatingStorage += 1;
     chrome.storage.sync.set(
         { "hideList": Object.keys(this.flags).join(",") },
@@ -54,50 +53,19 @@ HideList.prototype.setAuthorIsHiddenFlag = function (author, successCallback, er
             }
         }
     );
+};
+
+HideList.prototype.setAuthorIsHiddenFlag = function (author, successCallback, errorCallback) {
+    this.flags[author] = true;
+    this.updateStorage();
 };
 
 HideList.prototype.clearAuthorIsHiddenFlag = function (author, successCallback, errorCallback) {
     delete this.flags[author];
-    this.isUpdatingStorage += 1;
-    chrome.storage.sync.set(
-        { "hideList": Object.keys(this.flags).join(",") },
-        () => {
-            try {
-                if (chrome.runtime.lastError) {
-                    if (errorCallback) {
-                        errorCallback(chrome.runtime.lastError);
-                    }
-                } else {
-                    if (successCallback) {
-                        successCallback();
-                    }
-                }
-            } finally {
-                this.isUpdatingStorage -= 1;
-            }
-        }
-    );
+    this.updateStorage();
 };
 
 HideList.prototype.clearAll = function (successCallback, errorCallback) {
     this.flags = {};
-    this.isUpdatingStorage += 1;
-    chrome.storage.sync.set(
-        { "hideList": "" },
-        () => {
-            try {
-                if (chrome.runtime.lastError) {
-                    if (errorCallback) {
-                        errorCallback(chrome.runtime.lastError);
-                    }
-                } else {
-                    if (successCallback) {
-                        successCallback();
-                    }
-                }
-            } finally {
-                this.isUpdatingStorage -= 1;
-            }
-        }
-    );
+    this.updateStorage();
 };
