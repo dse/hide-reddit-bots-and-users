@@ -9,7 +9,9 @@ function HideListPopup() {
     var success = (authors) => {
         document.addEventListener("click", (event) => {
             if (event.target.classList.contains("clear-hide-list")) {
-                this.clearAll();
+                if (confirm("Are you sure?")) {
+                    this.clearAll();
+                }
             }
         });
         complete();
