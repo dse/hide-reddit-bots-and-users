@@ -11,6 +11,12 @@ function RedditPageHideListExtension() {
     this.allowMutationObserver = false;
 
     this.hideList = new HideList();
+    var complete = () => {
+        this.allowMutationObserver = true;
+        this.startMutationObserver();
+        this.setupStorageListener();
+        console.log(this.hideList.getMembers());
+    };
     var success = (authors) => {
         this.beginUpdatingDocument();
         try {
@@ -18,6 +24,7 @@ function RedditPageHideListExtension() {
             authors.forEach((author) => {
                 this.hideCommentsByAuthor(author);
             });
+            complete();
         } finally {
             this.endUpdatingDocument();
         }
@@ -25,12 +32,9 @@ function RedditPageHideListExtension() {
     var error = (lastError) => {
         alert(lastError.message || "unknown error sorry");
         this.updateAllHideShowLinks();
+        complete();
     };
     this.hideList.initialize(success, error);
-
-    this.allowMutationObserver = true;
-    this.startMutationObserver();
-    this.setupStorageListener();
 }
 
 RedditPageHideListExtension.prototype.beginUpdatingDocument = function () {
