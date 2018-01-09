@@ -36,7 +36,7 @@
     "nonew": true,
 
     // Prohibit unnecessary uses of the grouping operator.
-    "singleGroups": true,
+    // "singleGroups": true,
 
     // Prohibit the use of undeclared variables.
     "undef": true
