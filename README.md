@@ -24,12 +24,5 @@ syncing disabled, it uses local storage because in that situation,
 
 ## TODO
 
-- Finish the popup: get it to show the hide list and be able to clear
-  it out or remove an individual bot or user from it.
-
-- On reddit pages, use mutation observer to add show/hide links to
-  additional comments when someone clicks "load more comments".  To
-  see if anything needs updates, cache a list of comment IDs?
-
-- On reddit pages, use storage observer to update hide/show states
-  when the popup is used to update the hide list.
+- Popup: allow the user to remove an individual bot or user from the
+  list.
