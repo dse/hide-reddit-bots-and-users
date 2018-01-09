@@ -57,15 +57,15 @@ HideList.prototype.updateStorage = function (successCallback, errorCallback) {
 
 HideList.prototype.setAuthorIsHiddenFlag = function (author, successCallback, errorCallback) {
     this.flags[author] = true;
-    this.updateStorage();
+    this.updateStorage(successCallback, errorCallback);
 };
 
 HideList.prototype.clearAuthorIsHiddenFlag = function (author, successCallback, errorCallback) {
     delete this.flags[author];
-    this.updateStorage();
+    this.updateStorage(successCallback, errorCallback);
 };
 
 HideList.prototype.clearAll = function (successCallback, errorCallback) {
     this.flags = {};
-    this.updateStorage();
+    this.updateStorage(successCallback, errorCallback);
 };
