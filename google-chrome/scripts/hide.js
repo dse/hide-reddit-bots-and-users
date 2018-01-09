@@ -180,7 +180,6 @@ RedditPageHideListExtension.prototype.onMutation = function (mutationRecords, ob
     var commentIDs = this.getAllCommentIDs().join(",");
     this.updateAllHideShowLinks();
     if (!this.cachedCommentIDs || this.commentIDs !== this.cachedCommentIDs) {
-        console.log(commentIDs);
         this.updateAllHideShowLinks();
     }
     this.cachedCommentIDs = commentIDs;
@@ -193,7 +192,6 @@ RedditPageHideListExtension.prototype.startMutationObserver = function () {
         if (commentArea) {
             if (!this.mutationObserver) {
                 this.mutationObserver = new MutationObserver((mutationRecords, observer) => {
-                    console.log(this.isUpdatingDocument);
                     if (!this.isUpdatingDocument) {
                         this.onMutation(mutationRecords, observer);
                     }
